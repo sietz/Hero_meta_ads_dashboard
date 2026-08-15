@@ -1412,11 +1412,13 @@
       }
 
       function liveSourceConfigured() {
+        const url = String(PUBLISHED_CSV_URL || '').trim();
         return (
-          /^https?:\/\//i.test(PUBLISHED_CSV_URL) &&
-          !PUBLISHED_CSV_URL.includes('https://docs.google.com/spreadsheets/d/e/2PACX-1vQgOETaO3urEYEatgWupFhwMq22mrqGygTLlbAWXZtl2KSTnbU8WPsCO2xjQxZKbeYb7X-LeJWZQCCd/pub?gid=1244717252&single=true&output=csv') &&
-          !PUBLISHED_CSV_URL.includes('https://docs.google.com/spreadsheets/d/e/2PACX-1vQgOETaO3urEYEatgWupFhwMq22mrqGygTLlbAWXZtl2KSTnbU8WPsCO2xjQxZKbeYb7X-LeJWZQCCd/pub?gid=1244717252&single=true&output=csv') &&
-          !PUBLISHED_CSV_URL.includes('PASTE_YOUR')
+          /^https?:\/\//i.test(url) &&
+          !url.includes('PASTE_SHEET_ID_HERE') &&
+          !url.includes('PASTE_SHEET_NAME_HERE') &&
+          !url.includes('PASTE_YOUR_PUBLISHED_GOOGLE_SHEET_CSV_URL_HERE') &&
+          !url.includes('PASTE_YOUR')
         );
       }
 
