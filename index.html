@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meta Ads Funnel Dashboard</title>
+  <title>Hero Bundle Marketing Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <style>
     :root {
@@ -21,7 +21,12 @@
       --amber-bg: #fffbeb;
       --red: #b91c1c;
       --red-bg: #fef2f2;
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+      --shadow-premium: 0 22px 55px rgba(50, 67, 128, 0.13);
+      --accent-indigo: #4f6ef7;
+      --accent-violet: #7467f0;
+      --best-accent: #14b8a6;
+      --best-accent-deep: #0f8f83;
       --radius: 16px;
     }
 
@@ -31,7 +36,11 @@
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(79, 110, 247, 0.10), transparent 30%),
+        radial-gradient(circle at 92% 12%, rgba(116, 103, 240, 0.08), transparent 28%),
+        linear-gradient(180deg, #f8faff 0%, var(--bg) 48%, #f7f9fc 100%);
+      background-attachment: fixed;
       line-height: 1.45;
     }
 
@@ -44,17 +53,31 @@
     }
 
     .topbar {
+      position: relative;
+      z-index: 120;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 18px;
+      padding: 16px 18px;
+      border: 1px solid rgba(226, 232, 240, 0.92);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 12px 34px rgba(42, 55, 99, 0.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
     .title-group h1 {
       margin: 0;
       font-size: clamp(24px, 3vw, 34px);
-      letter-spacing: -0.03em;
+      letter-spacing: -0.035em;
+      font-weight: 900;
+      background: linear-gradient(110deg, #172033 5%, #3349a8 55%, #6158d8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .title-group p {
@@ -85,6 +108,7 @@
       color: var(--accent);
       font-size: 12px;
       font-weight: 800;
+      font-size: 13px;
       cursor: pointer;
     }
 
@@ -108,34 +132,87 @@
       display: none;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .campaign-filter,
+    .topbar-snapshot-selector {
+      min-width: 200px;
+    }
+
+    .campaign-filter label,
+    .topbar-controls .snapshot-control-label {
+      display: none;
+    }
+
+    .campaign-filter select {
+      width: 100%;
+      font-size: 13px;
+      min-height: 42px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 14px;
+      padding: 8px 34px 8px 12px;
+      color: var(--text);
+      background: #fff;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+      font-weight: 800;
+      font-size: 13px;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%);
+      background-position: calc(100% - 17px) 19px, calc(100% - 12px) 19px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
     .segmented {
       display: inline-flex;
       padding: 4px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 14px;
       background: #fff;
-      box-shadow: var(--shadow);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
       flex-shrink: 0;
     }
 
     .segmented button {
+      font-size: 13px;
       border: 0;
       background: transparent;
       color: var(--muted);
-      padding: 8px 14px;
-      border-radius: 9px;
+      padding: 9px 14px;
+      border-radius: 10px;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 800;
+      font-size: 13px;
     }
 
     .segmented button.active {
       background: var(--accent);
       color: #fff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(252, 253, 255, 0.98));
+      border: 1px solid rgba(226, 232, 240, 0.95);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
@@ -332,7 +409,7 @@
     .import-message.error { color: var(--red); }
     .import-message.success { color: var(--green); }
 
-    section { margin-top: 26px; }
+    section { position: relative; z-index: 1; margin-top: 26px; }
 
     .section-head {
       display: flex;
@@ -343,9 +420,25 @@
     }
 
     .section-head h2 {
+      position: relative;
       margin: 0;
+      padding-left: 13px;
       font-size: 20px;
-      letter-spacing: -0.02em;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      color: #18223a;
+    }
+
+    .section-head h2::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 3px;
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent-indigo), var(--accent-violet));
+      box-shadow: 0 3px 9px rgba(79, 110, 247, 0.28);
     }
 
     .section-head p {
@@ -367,12 +460,17 @@
       width: min(360px, 100%);
     }
 
+    .topbar-snapshot-selector {
+      width: min(300px, 100%);
+    }
+
     .snapshot-control-label {
       display: block;
       margin-bottom: 5px;
       color: var(--muted);
       font-size: 12px;
       font-weight: 800;
+      font-size: 13px;
     }
 
     .snapshot-date-picker,
@@ -383,21 +481,23 @@
 
     .snapshot-trigger,
     .snapshot-select {
+      font-size: 13px;
       width: 100%;
       min-height: 42px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 14px;
       background: #fff;
       color: var(--text);
-      box-shadow: var(--shadow);
-      font-weight: 750;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+      font-weight: 800;
     }
 
     .snapshot-trigger {
+      font-size: 13px;
       display: flex;
       align-items: center;
       gap: 9px;
-      padding: 9px 11px;
+      padding: 10px 14px;
       cursor: pointer;
       text-align: left;
     }
@@ -426,7 +526,7 @@
 
     .snapshot-date-menu {
       position: absolute;
-      z-index: 60;
+      z-index: 3000;
       top: calc(100% + 8px);
       left: 0;
       width: min(372px, calc(100vw - 32px));
@@ -513,61 +613,752 @@
 
     .chips {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 14px;
     }
 
     .chip {
-      border-radius: 14px;
-      padding: 16px;
-      border: 1px solid var(--border);
-      background: #fff;
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      padding: 18px 18px 14px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      background: rgba(255, 255, 255, 0.97);
       cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+      transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease, border-color .22s ease;
       outline: none;
+      min-height: 168px;
+    }
+
+    .chip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, rgba(255,255,255,0), rgba(255,255,255,.38), rgba(255,255,255,0));
+      transform: translateX(-120%);
+      transition: transform .55s ease;
     }
 
     .chip:hover {
-      transform: translateY(-2px) scale(1.01);
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+      transform: translateY(-5px);
+      border-color: rgba(165, 180, 252, 0.84);
+      box-shadow: 0 20px 48px rgba(61, 76, 145, 0.14);
+    }
+
+    .chip:hover::after {
+      transform: translateX(120%);
     }
 
     .chip:focus-visible {
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18), 0 12px 28px rgba(15, 23, 42, 0.10);
     }
 
-    .chip.green { background: var(--green-bg); border-color: #bbf7d0; }
-    .chip.amber { background: var(--amber-bg); border-color: #fde68a; }
-    .chip.red { background: var(--red-bg); border-color: #fecaca; }
+    .chip-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .chip-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #4f8ff8;
+      background: linear-gradient(180deg, rgba(86, 172, 255, 0.14), rgba(72, 129, 255, 0.07));
+      flex: 0 0 auto;
+    }
+
+    .chip-icon svg {
+      width: 19px;
+      height: 19px;
+    }
 
     .chip-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
-      color: var(--muted);
-      margin-bottom: 7px;
+      color: #334155;
+      line-height: 1.2;
     }
 
     .chip-value {
-      font-size: 24px;
+      font-size: 23px;
+      line-height: 1.12;
       font-weight: 850;
+      letter-spacing: -0.02em;
+      color: #111827;
+    }
+
+    .chip-value.metric-good { color: #16a34a; }
+    .chip-value.metric-bad { color: #dc2626; }
+
+    .chip-target {
+      margin-top: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      min-height: 15px;
+    }
+
+    .chip-footer {
+      margin-top: 10px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .chip-delta {
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    .chip-delta.delta-good { color: #16a34a; }
+    .chip-delta.delta-bad { color: #dc2626; }
+    .chip-delta.delta-neutral { color: #94a3b8; }
+
+    .chip-sparkline {
+      flex: 1 1 auto;
+      min-width: 92px;
+      height: 38px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    .chip-sparkline svg {
+      width: 100%;
+      height: 38px;
+      overflow: visible;
+    }
+
+
+    /* Section A: premium metric cards without sparklines */
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric-card {
+      --metric-accent: #5f83f7;
+      --metric-accent-soft: rgba(95, 131, 247, 0.10);
+      position: relative;
+      min-height: 150px;
+      padding: 16px 17px 15px;
+      border-radius: 18px;
+      border: 1px solid rgba(226, 232, 240, 0.96);
+      background: linear-gradient(160deg, rgba(255,255,255,.99), rgba(249,251,255,.98));
+      box-shadow: 0 12px 30px rgba(31, 42, 84, 0.07);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+    .metric-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--metric-accent), rgba(255,255,255,0));
+      opacity: .9;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -54px;
+      top: -58px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--metric-accent-soft), rgba(255,255,255,0) 72%);
+      pointer-events: none;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(165, 180, 252, .86);
+      box-shadow: 0 22px 48px rgba(49, 64, 125, .14);
+    }
+
+    .metric-spend { --metric-accent: #4f8ff8; --metric-accent-soft: rgba(79,143,248,.14); }
+    .metric-orders { --metric-accent: #4b76ee; --metric-accent-soft: rgba(75,118,238,.14); }
+    .metric-roas { --metric-accent: #5f6fe8; --metric-accent-soft: rgba(95,111,232,.14); }
+    .metric-cpo { --metric-accent: #7582e8; --metric-accent-soft: rgba(117,130,232,.14); }
+    .metric-conversion { --metric-accent: #4a9bd9; --metric-accent-soft: rgba(74,155,217,.14); }
+
+    .metric-card .chip-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .metric-card .chip-icon {
+      width: 39px;
+      height: 39px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--metric-accent);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), var(--metric-accent-soft));
+      border: 1px solid rgba(219, 234, 254, .9);
+      box-shadow: 0 8px 18px rgba(49, 90, 170, .08);
+      flex: 0 0 auto;
+    }
+
+    .metric-card .chip-icon svg { width: 22px; height: 22px; display: block; }
+
+    .metric-card .chip-title {
+      font-size: 14px;
+      line-height: 1.2;
+      font-weight: 850;
+      color: #334155;
+    }
+
+    .metric-card .chip-value {
+      font-size: 27px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      color: #15203a;
+      transition: color .2s ease;
+    }
+
+    .metric-card .chip-value.metric-neutral { color: #15203a; }
+    .metric-card .chip-value.metric-good { color: #48ba7c; }
+    .metric-card .chip-value.metric-warning { color: #d5a62e; }
+    .metric-card .chip-value.metric-bad { color: #ef7680; }
+
+    .metric-card .chip-target {
+      margin-top: 5px;
+      min-height: 14px;
+      font-size: 11px;
+      line-height: 1.25;
+      font-weight: 750;
+      color: #9aa8c0;
+    }
+
+    .metric-card .chip-target-empty { display: none; }
+
+    .metric-card .chip-footer {
+      position: static;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .metric-card .chip-delta {
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      white-space: normal;
+    }
+
+    .metric-card .chip-delta.delta-good { color: #48ba7c; }
+    .metric-card .chip-delta.delta-bad { color: #ef7680; }
+    .metric-card .chip-delta.delta-warning { color: #d5a62e; }
+    .metric-card .chip-delta.delta-neutral { color: #7486a6; }
+
+    .chip-sparkline { display: none !important; }
+
+
+    .chart-card {
+      padding: 18px 18px 14px;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 42px rgba(35, 47, 93, 0.14);
+      border-color: rgba(191, 219, 254, 0.95);
+    }
+
+    .chart-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #172554;
+      font-weight: 900;
       letter-spacing: -0.02em;
     }
 
-    .chip.green .chip-value, .chip.green .chip-status { color: var(--green); }
-    .chip.amber .chip-value, .chip.amber .chip-status { color: var(--amber); }
-    .chip.red .chip-value, .chip.red .chip-status { color: var(--red); }
-
-    .chip-target {
-      margin-top: 4px;
-      font-size: 12px;
-      color: var(--muted);
+    .chart-card-top,
+    .chart-metric-pair,
+    .chart-metric-mini,
+    .chart-current-value,
+    .chart-current-change,
+    .chart-metric-label {
+      display: none !important;
     }
 
-    .chip-status {
-      margin-top: 7px;
-      font-size: 12px;
+    .funnel-card {
+      padding: 20px 24px 18px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .funnel-shell {
+      position: relative;
+      min-height: 690px;
+    }
+
+    .funnel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .funnel-head-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .funnel-meta-badge {
+      width: 74px;
+      height: 74px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #ffffff 0%, #f5f8ff 100%);
+      border: 1px solid rgba(226, 232, 240, 0.94);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+      color: #2563eb;
+      flex: 0 0 auto;
+    }
+
+    .funnel-meta-badge svg { width: 38px; height: 38px; display: block; }
+
+    .funnel-head-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.06;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: #172554;
+    }
+
+    .funnel-head-subtitle {
+      margin: 8px 0 0;
+      font-size: 15px;
+      color: #6b7daa;
+      font-weight: 500;
+    }
+
+    .funnel-head-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .funnel-head-pill,
+    .funnel-head-more {
+      min-height: 56px;
+      border-radius: 14px;
+      border: 1px solid rgba(226, 232, 240, 0.96);
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #172554;
       font-weight: 800;
     }
+
+    .funnel-head-pill {
+      padding: 0 18px;
+    }
+
+    .funnel-head-pill svg,
+    .funnel-head-more svg { width: 20px; height: 20px; color: #1d4ed8; }
+
+    .funnel-head-more { width: 56px; justify-content: center; }
+
+    .funnel-track-wrap {
+      position: relative;
+      min-height: 470px;
+    }
+
+    .funnel-shape {
+      position: absolute;
+      left: 2%;
+      right: 3%;
+      top: 182px;
+      height: 300px;
+      border-radius: 26px;
+      background: linear-gradient(90deg, #4136d1 0%, #4e68f2 34%, #47a8ff 68%, #27c5c8 100%);
+      clip-path: polygon(0 15%, 100% 39%, 100% 61%, 0 85%);
+      box-shadow: 0 24px 48px rgba(79, 110, 247, 0.20);
+    }
+
+    .funnel-divider {
+      position: absolute;
+      top: 235px;
+      height: 190px;
+      width: 0;
+      border-left: 2px dashed rgba(255,255,255,0.35);
+      z-index: 2;
+    }
+
+    .funnel-chevron {
+      position: absolute;
+      top: 324px;
+      transform: translate(-50%, -50%);
+      font-size: 42px;
+      color: rgba(255,255,255,0.62);
+      font-weight: 300;
+      z-index: 2;
+    }
+
+    .funnel-node {
+      position: absolute;
+      width: 250px;
+      z-index: 3;
+      transform: translateX(-50%);
+    }
+
+    .funnel-node.top { top: 58px; }
+    .funnel-node.bottom { top: 472px; }
+
+    .funnel-node-line {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      border-left: 2px solid rgba(129, 147, 205, 0.65);
+      z-index: 1;
+    }
+
+    .funnel-node.top .funnel-node-line { top: 140px; height: 86px; }
+    .funnel-node.bottom .funnel-node-line { top: -110px; height: 86px; }
+
+    .funnel-node-dot {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: #6b76c9;
+      border: 3px solid rgba(255,255,255,.98);
+      box-shadow: 0 10px 24px rgba(59, 130, 246, 0.18);
+      z-index: 2;
+    }
+
+    .funnel-node.top .funnel-node-dot { top: 218px; }
+    .funnel-node.bottom .funnel-node-dot { top: -28px; }
+
+    .funnel-node-content {
+      display: grid;
+      grid-template-columns: 68px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+    }
+
+    .funnel-node-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #ffffff 0%, #f4f7fc 100%);
+      border: 1px solid rgba(226, 232, 240, 0.98);
+      color: #3463f0;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .funnel-node-icon svg { width: 30px; height: 30px; display: block; }
+
+    .funnel-node-title {
+      font-size: 14px;
+      line-height: 1.2;
+      font-weight: 850;
+      color: #1c2951;
+    }
+
+    .funnel-node-value {
+      margin-top: 4px;
+      font-size: 24px;
+      line-height: 1.05;
+      font-weight: 900;
+      color: #172554;
+      letter-spacing: -0.03em;
+    }
+
+    .funnel-node-retained {
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #697dae;
+    }
+
+    .funnel-node-change {
+      margin-top: 7px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .funnel-node-change.positive { color: #22a865; }
+    .funnel-node-change.negative { color: #e45b66; }
+    .funnel-node-change.neutral { color: #94a3b8; }
+
+    @media (max-width: 1100px) {
+      .topbar-controls { flex-wrap: wrap; }
+      .funnel-head { flex-direction: column; align-items: flex-start; }
+      .funnel-head-actions { width: 100%; }
+    }
+
+    @media (max-width: 900px) {
+      .funnel-shell { min-height: auto; }
+      .funnel-track-wrap { min-height: auto; }
+      .funnel-shape, .funnel-divider, .funnel-chevron, .funnel-node-line, .funnel-node-dot { display: none; }
+      .funnel-node {
+        position: relative;
+        width: 100%;
+        left: auto !important;
+        top: auto !important;
+        transform: none;
+        margin-bottom: 18px;
+      }
+      .funnel-node-content { grid-template-columns: 60px minmax(0,1fr); }
+    }
+
+
+    .chart-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chart-card-top h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #0f172a;
+    }
+
+    .chart-current-value {
+      margin-top: 6px;
+      font-size: 28px;
+      line-height: 1.08;
+      font-weight: 850;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+
+    .chart-current-value.compact {
+      font-size: 22px;
+    }
+
+    .chart-current-change {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .chart-current-change.positive { color: #16a34a; }
+    .chart-current-change.negative { color: #dc2626; }
+    .chart-current-change.neutral { color: #94a3b8; }
+
+    .chart-metric-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .chart-metric-mini {
+      min-width: 0;
+    }
+
+    .chart-metric-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #94a3b8;
+    }
+
+    .funnel-card {
+      padding: 28px 24px 24px;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 20% 16%, rgba(37, 99, 235, 0.08), transparent 36%),
+        linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .funnel {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .funnel-horizontal {
+      position: relative;
+      min-height: 660px;
+      padding: 22px 16px 18px;
+    }
+
+    .funnel-track {
+      position: absolute;
+      left: 2.5%;
+      right: 3.5%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 300px;
+      pointer-events: none;
+    }
+
+    .funnel-track-shape {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(90deg, #3f37c9 0%, #4d7cf7 35%, #49b6ff 68%, #2ec7c9 100%);
+      clip-path: polygon(0 18%, 100% 43%, 100% 61%, 0 86%);
+      box-shadow: 0 24px 44px rgba(59, 130, 246, 0.16);
+    }
+
+    .funnel-track-sep {
+      position: absolute;
+      top: 28%;
+      bottom: 28%;
+      width: 0;
+      border-left: 2px dashed rgba(255, 255, 255, 0.32);
+    }
+
+    .funnel-track-chevron {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 300;
+    }
+
+    .funnel-stage {
+      position: absolute;
+      width: 240px;
+      z-index: 2;
+    }
+
+    .funnel-stage.top { transform: translateX(-50%); }
+    .funnel-stage.bottom { transform: translateX(-50%); }
+
+    .funnel-stage-anchor {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      z-index: 1;
+    }
+
+    .funnel-stage.top .funnel-stage-anchor {
+      top: 100%;
+      height: 84px;
+      border-left: 2px solid rgba(99, 122, 198, 0.52);
+    }
+
+    .funnel-stage.bottom .funnel-stage-anchor {
+      bottom: 100%;
+      height: 84px;
+      border-left: 2px solid rgba(99, 122, 198, 0.52);
+    }
+
+    .funnel-stage-dot {
+      position: absolute;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: #637ac6;
+      border: 3px solid rgba(255, 255, 255, 0.96);
+      box-shadow: 0 6px 14px rgba(59, 130, 246, 0.18);
+    }
+
+    .funnel-stage.top .funnel-stage-dot { top: calc(100% + 77px); }
+    .funnel-stage.bottom .funnel-stage-dot { bottom: calc(100% + 77px); }
+
+    .funnel-stage-content {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .funnel-stage-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+      border: 1px solid rgba(219, 234, 254, 0.9);
+      color: #3168ee;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+    }
+
+    .funnel-stage-icon-wrap svg {
+      width: 30px;
+      height: 30px;
+      display: block;
+    }
+
+    .funnel-stage-name {
+      font-size: 13px;
+      line-height: 1.25;
+      font-weight: 850;
+      color: #162456;
+    }
+
+    .funnel-stage-count {
+      margin-top: 3px;
+      font-size: 24px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+
+    .funnel-stage-retained {
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #6477ac;
+    }
+
+    .funnel-stage-change {
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .funnel-stage-change.positive { color: #16a34a; }
+    .funnel-stage-change.negative { color: #dc2626; }
+    .funnel-stage-change.neutral { color: #94a3b8; }
 
     .funnel-card {
       padding: 26px;
@@ -629,21 +1420,28 @@
     .funnel-shape.stage-1 { --stage-color-a: #1e3a8a; --stage-color-b: #2563eb; }
     .funnel-shape.stage-2 { --stage-color-a: #1d4ed8; --stage-color-b: #3b82f6; }
     .funnel-shape.stage-3 { --stage-color-a: #3b82f6; --stage-color-b: #60a5fa; }
-    .funnel-shape.stage-4 { --stage-color-a: #60a5fa; --stage-color-b: #bfdbfe; color: #17325f; }
+    .funnel-shape.stage-4 { --stage-color-a: #60a5fa; --stage-color-b: #93c5fd; }
+    .funnel-shape.stage-5 { --stage-color-a: #7c83f6; --stage-color-b: #b7b8ff; color: #1f2a5a; }
 
     .funnel-stage-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
+      width: 50px;
+      height: 50px;
+      border-radius: 15px;
       display: grid;
       place-items: center;
-      background: rgba(255, 255, 255, 0.17);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
-      backdrop-filter: blur(4px);
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13), 0 8px 18px rgba(18, 44, 92, 0.12);
+      backdrop-filter: blur(6px);
+      transition: transform .22s ease, background .22s ease;
     }
 
-    .stage-4 .funnel-stage-icon {
+    .funnel-shape:hover .funnel-stage-icon {
+      transform: scale(1.08) rotate(-2deg);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .stage-5 .funnel-stage-icon {
       background: rgba(255, 255, 255, 0.48);
       border-color: rgba(255, 255, 255, 0.66);
     }
@@ -676,12 +1474,19 @@
       padding: 14px 16px;
       border: 1px solid #dbeafe;
       border-radius: 15px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       box-shadow: 0 9px 24px rgba(15, 23, 42, 0.065);
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 12px 18px;
       align-items: center;
+      transition: transform .20s ease, box-shadow .20s ease, border-color .20s ease;
+    }
+
+    .funnel-detail-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(165, 180, 252, 0.8);
+      box-shadow: 0 15px 34px rgba(54, 70, 132, 0.11);
     }
 
     .funnel-detail-name {
@@ -727,6 +1532,14 @@
       color: var(--text);
       font-size: 13px;
       font-weight: 900;
+    }
+
+    .funnel-detail-stat-value.trend-up { color: var(--green); }
+    .funnel-detail-stat-value.trend-down { color: var(--red); }
+    .funnel-detail-stat-value.trend-neutral { color: var(--muted); }
+
+    .section-b-reserved {
+      min-height: 112px;
     }
 
     .chart-focus-pulse {
@@ -776,19 +1589,65 @@
     }
 
     .chart-card {
-      padding: 16px;
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding: 18px;
       min-width: 0;
+      border-color: rgba(222, 227, 242, 0.96);
+      background:
+        radial-gradient(circle at 88% 0%, rgba(79, 110, 247, 0.065), transparent 27%),
+        linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+      box-shadow: 0 10px 30px rgba(38, 52, 104, 0.07);
+      transition: transform .24s cubic-bezier(.2,.8,.2,1), box-shadow .24s ease, border-color .24s ease;
+      will-change: transform;
+    }
+
+    .chart-card::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 160px;
+      height: 160px;
+      right: -70px;
+      top: -95px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(116, 103, 240, 0.12), rgba(79, 110, 247, 0));
+      transition: transform .28s ease, opacity .28s ease;
+      opacity: .75;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-6px) scale(1.007);
+      border-color: rgba(165, 180, 252, 0.92);
+      box-shadow: var(--shadow-premium);
+    }
+
+    .chart-card:hover::before {
+      transform: scale(1.18);
+      opacity: 1;
     }
 
     .chart-card h3 {
-      margin: 0 0 10px;
-      font-size: 15px;
+      margin: 0 0 12px;
+      font-size: 16px;
+      font-weight: 850;
+      letter-spacing: -0.015em;
+      color: #1d2740;
     }
 
     .chart-wrap {
       position: relative;
       height: 300px;
       width: 100%;
+      border: 1px solid rgba(235, 239, 248, 0.95);
+      border-radius: 14px;
+      padding: 8px 8px 3px;
+      background: linear-gradient(180deg, rgba(248, 250, 255, 0.86), rgba(255, 255, 255, 0.46));
+    }
+
+    .chart-wrap canvas {
+      cursor: crosshair;
     }
 
     .chart-wrap.tall { height: 330px; }
@@ -896,12 +1755,16 @@
       .targets-box { grid-column: 1 / -1; }
       .target-grid { grid-template-columns: repeat(4, 1fr); }
       .chart-grid-2 { grid-template-columns: 1fr; }
+      .chips { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .funnel-horizontal { min-height: 760px; }
     }
 
     @media (max-width: 760px) {
       .app { width: min(100% - 20px, 1500px); padding-top: 14px; }
       .topbar { align-items: flex-start; flex-direction: column; }
       .title-meta-row { align-items: flex-start; }
+      .topbar-controls { width: 100%; align-items: stretch; flex-direction: column; }
+      .campaign-filter, .topbar-snapshot-selector { width: 100%; min-width: 0; }
       .segmented { width: 100%; }
       .segmented button { flex: 1; }
       .data-grid { grid-template-columns: 1fr; }
@@ -930,13 +1793,249 @@
       .funnel-detail-stats { justify-content: flex-start; }
       .funnel-detail-stat { flex: 1 1 130px; }
     }
+
+
+    /* Section C: reference-style horizontal funnel */
+    .funnel-card {
+      padding: 22px 26px 20px;
+      overflow: hidden;
+      background: #ffffff;
+      border-radius: 22px;
+    }
+
+    .funnel { width: 100%; max-width: none; padding: 0; }
+
+    .funnel-reference-shell {
+      position: relative;
+      min-height: 780px;
+    }
+
+    .funnel-reference-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 8px 8px 0;
+    }
+
+    .funnel-reference-brand {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .funnel-reference-logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, #ffffff, #f5f8ff);
+      border: 1px solid #e7edf8;
+      box-shadow: 0 15px 32px rgba(15, 23, 42, .08);
+      color: #2563eb;
+    }
+
+    .funnel-reference-logo svg { width: 46px; height: 46px; }
+
+    .funnel-reference-title {
+      margin: 0;
+      color: #142150;
+      font-size: clamp(25px, 2.5vw, 34px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -.04em;
+    }
+
+    .funnel-reference-subtitle {
+      margin: 9px 0 0;
+      color: #7587b3;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .funnel-reference-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .funnel-reference-period,
+    .funnel-reference-more {
+      min-height: 58px;
+      border: 1px solid #e4eaf5;
+      border-radius: 14px;
+      background: #fff;
+      color: #172554;
+      box-shadow: 0 9px 22px rgba(15, 23, 42, .04);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .funnel-reference-period { padding: 0 18px; }
+    .funnel-reference-more { width: 58px; justify-content: center; }
+    .funnel-reference-period svg,
+    .funnel-reference-more svg { width: 20px; height: 20px; color: #1f4ccf; }
+
+    .funnel-reference-body {
+      position: relative;
+      height: 640px;
+      margin-top: 6px;
+    }
+
+    .funnel-ribbon-svg {
+      position: absolute;
+      left: 2.5%;
+      right: 2.5%;
+      top: 195px;
+      width: 95%;
+      height: 310px;
+      overflow: visible;
+      filter: drop-shadow(0 24px 24px rgba(55, 89, 205, .13));
+    }
+
+    .funnel-stage-card {
+      position: absolute;
+      width: 270px;
+      z-index: 4;
+      transform: translateX(-50%);
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(226, 232, 240, 0.96);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.075);
+    }
+
+    .funnel-stage-card.top { top: 28px; }
+    .funnel-stage-card.bottom { top: 470px; }
+
+    .funnel-stage-card-inner {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .funnel-stage-card-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #2f62ec;
+      background: linear-gradient(180deg, #fff, #f3f7fd);
+      border: 1px solid #e5ebf5;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .06);
+    }
+
+    .funnel-stage-card-icon svg { width: 27px; height: 27px; }
+
+    .funnel-stage-card-title {
+      color: #18244f;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.22;
+    }
+
+    .funnel-stage-card-value {
+      margin-top: 4px;
+      color: #101c47;
+      font-size: 25px;
+      line-height: 1.02;
+      font-weight: 900;
+      letter-spacing: -.03em;
+    }
+
+    .funnel-stage-card-retained {
+      margin-top: 7px;
+      color: #7285b5;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .funnel-stage-card-change {
+      margin-top: 7px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .funnel-stage-card-change.positive { color: #31ad72; }
+    .funnel-stage-card-change.negative { color: #ec6b75; }
+    .funnel-stage-card-change.neutral { color: #94a3b8; }
+
+    .funnel-stage-connector {
+      position: absolute;
+      z-index: 3;
+      width: 0;
+      border-left: 2px solid rgba(101, 119, 191, .62);
+    }
+
+    .funnel-stage-connector-dot {
+      position: absolute;
+      left: -8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: #6974c7;
+      border: 3px solid #fff;
+      box-shadow: 0 8px 18px rgba(59, 130, 246, .17);
+    }
+
+    @media (max-width: 1080px) {
+      .funnel-reference-head { flex-direction: column; }
+      .funnel-reference-actions { align-self: flex-end; }
+      .funnel-stage-card { width: 230px; }
+    }
+
+    @media (max-width: 860px) {
+      .funnel-reference-shell { min-height: auto; }
+      .funnel-reference-body { height: auto; margin-top: 24px; }
+      .funnel-ribbon-svg,
+      .funnel-stage-connector { display: none; }
+      .funnel-stage-card {
+        position: relative;
+        left: auto !important;
+        top: auto !important;
+        width: 100%;
+        transform: none;
+        margin: 0 0 16px;
+        padding: 14px;
+        border: 1px solid #e6ecf6;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #fff, #fbfdff);
+      }
+      .funnel-reference-actions { align-self: stretch; }
+      .funnel-reference-period { flex: 1; justify-content: center; }
+    }
+
+
+
+    /* Calendar must always float above dashboard cards */
+    .topbar { z-index: 5000; overflow: visible; }
+    .topbar-controls,
+    .topbar-snapshot-selector,
+    .snapshot-date-picker { overflow: visible; }
+    .snapshot-date-picker.open { position: relative; z-index: 7000; }
+    .snapshot-date-menu {
+      z-index: 8000;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      isolation: isolate;
+    }
+    section { z-index: 1; }
+
   </style>
 </head>
 <body>
   <main class="app">
     <div class="topbar">
       <div class="title-group">
-        <h1>Meta Ads Funnel Dashboard</h1>
+        <h1>Hero Bundle Marketing Dashboard</h1>
         <div class="title-meta-row">
           <span id="dataLoadedTop">Data loaded: —</span>
           <span class="title-meta-separator" aria-hidden="true">•</span>
@@ -945,10 +2044,32 @@
           <span id="liveSourceMessage" class="live-source-message" role="status" aria-live="polite"></span>
         </div>
       </div>
-      <div class="segmented" aria-label="Time grouping">
-        <button type="button" class="active" data-granularity="daily">Daily</button>
-        <button type="button" data-granularity="weekly">Weekly</button>
-        <button type="button" data-granularity="monthly">Monthly</button>
+      <div class="topbar-controls">
+        <div class="segmented" aria-label="Time grouping">
+          <button type="button" class="active" data-granularity="daily">Daily</button>
+          <button type="button" data-granularity="weekly">Weekly</button>
+          <button type="button" data-granularity="monthly">Monthly</button>
+        </div>
+        <div class="snapshot-selector topbar-snapshot-selector">
+          <label class="snapshot-control-label sr-only" for="snapshotPeriodSelect">Snapshot period</label>
+          <div class="snapshot-date-picker" id="snapshotDailyPicker">
+            <button class="snapshot-trigger" id="snapshotDateButton" type="button" aria-haspopup="dialog" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span id="snapshotDateButtonText">No dates available</span>
+              <svg class="snapshot-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="snapshot-date-menu" id="snapshotDateMenu" role="dialog" aria-label="Choose snapshot date" hidden></div>
+          </div>
+          <div class="snapshot-select-wrap" id="snapshotSelectWrap" hidden>
+            <select class="snapshot-select" id="snapshotPeriodSelect" aria-label="Choose snapshot period"></select>
+          </div>
+        </div>
+        <div class="campaign-filter">
+          <label class="sr-only" for="campaignFilter">Campaign</label>
+          <select id="campaignFilter" aria-label="Filter dashboard by campaign">
+            <option value="__ALL__">All Campaigns</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -980,11 +2101,11 @@
             <h3>Targets</h3>
             <div class="target-grid">
               <div class="target-row">
-                <label for="cprTarget">CPR Target</label>
+                <label for="cprTarget">Cost per Order Target</label>
                 <div class="target-input-wrap"><span>₹</span><input id="cprTarget" type="number" min="0" step="0.01" /></div>
               </div>
               <div class="target-row">
-                <label for="checkoutTarget">Cost per Checkout Initiated Target</label>
+                <label for="checkoutTarget">Cost per Checkout Target</label>
                 <div class="target-input-wrap"><span>₹</span><input id="checkoutTarget" type="number" min="0" step="0.01" /></div>
               </div>
               <div class="target-row">
@@ -994,6 +2115,10 @@
               <div class="target-row">
                 <label for="landingPageViewRateTarget">Landing Page View Rate Target</label>
                 <div class="target-input-wrap"><input id="landingPageViewRateTarget" type="number" min="0" step="0.1" /><span>%</span></div>
+              </div>
+              <div class="target-row">
+                <label for="conversionRateTarget">Conversion Rate Target</label>
+                <div class="target-input-wrap"><input id="conversionRateTarget" type="number" min="0" step="0.1" /><span>%</span></div>
               </div>
             </div>
           </div>
@@ -1011,133 +2136,163 @@
       <div class="section-head">
         <div>
           <h2>Section A — Health Snapshot</h2>
-          <p>Selected period across all campaigns.</p>
         </div>
         <span class="period-badge" id="currentPeriodBadge">No data</span>
       </div>
-      <div class="snapshot-control-bar">
-        <div class="snapshot-selector">
-          <label class="snapshot-control-label" for="snapshotPeriodSelect">Snapshot period</label>
-          <div class="snapshot-date-picker" id="snapshotDailyPicker">
-            <button class="snapshot-trigger" id="snapshotDateButton" type="button" aria-haspopup="dialog" aria-expanded="false">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              <span id="snapshotDateButtonText">No dates available</span>
-              <svg class="snapshot-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="snapshot-date-menu" id="snapshotDateMenu" role="dialog" aria-label="Choose snapshot date" hidden></div>
-          </div>
-          <div class="snapshot-select-wrap" id="snapshotSelectWrap" hidden>
-            <select class="snapshot-select" id="snapshotPeriodSelect" aria-label="Choose snapshot period"></select>
-          </div>
-        </div>
-      </div>
       <div class="chips">
-        <div id="chipCpr" class="chip" role="button" tabindex="0" data-scroll-target="cprTrendCard" aria-label="View CPR trend">
-          <div class="chip-title">CPR vs Target</div>
-          <div class="chip-value">—</div>
-          <div class="chip-target">Target: —</div>
-          <div class="chip-status">No data</div>
-        </div>
-        <div id="chipRoas" class="chip" role="button" tabindex="0" data-scroll-target="roasCard" aria-label="View ROAS trend">
-          <div class="chip-title">ROAS vs Target</div>
-          <div class="chip-value">—</div>
-          <div class="chip-target">Target: —</div>
-          <div class="chip-status">No data</div>
-        </div>
-        <div id="chipCheckout" class="chip" role="button" tabindex="0" data-scroll-target="graph3Section" aria-label="View checkout trend">
-          <div class="chip-title">Cost per Checkout Initiated vs Target</div>
-          <div class="chip-value">—</div>
-          <div class="chip-target">Target: —</div>
-          <div class="chip-status">No data</div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-head">
-        <div>
-          <h2>Section B — Funnel Overview</h2>
-          <p>Selected period across all campaigns.</p>
-        </div>
-      </div>
-      <div class="card funnel-card">
-        <div id="funnel" class="funnel"></div>
-        <p id="funnelCaption" class="caption">Upload data to see the customer journey from click to purchase.</p>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-head">
-        <div>
-          <h2>Section C — Stage-by-Stage Detail Graphs</h2>
-          <p>All time-series graphs follow the Daily / Weekly / Monthly control at the top.</p>
-        </div>
-      </div>
-
-      <div class="card chart-card" id="spendResultsCard">
-        <h3>Graph 4 — Amount Spent & Result</h3>
-        <div class="chart-wrap tall"><canvas id="spendResultsChart"></canvas></div>
-        <p class="caption">Shows how spending and purchase results moved together over time.</p>
-      </div>
-
-      <div class="card chart-card stack-gap" id="roasCard">
-        <h3>ROAS</h3>
-        <div class="chart-wrap"><canvas id="roasChart"></canvas></div>
-        <div class="target-key-row"><span class="target-key"><span class="target-key-dash"></span><span id="roasTargetKey">ROAS Target: —</span></span></div>
-        <p class="caption">Shows purchase ROAS over time against your ROAS target; higher is better.</p>
-      </div>
-
-      <div class="card chart-card stack-gap" id="cprTrendCard">
-        <h3>Graph 5 — CPR Trend</h3>
-        <div class="chart-wrap"><canvas id="cprChart"></canvas></div>
-        <div class="target-key-row"><span class="target-key"><span class="target-key-dash"></span><span id="cprTargetKey">CPR Target: —</span></span></div>
-        <p class="caption">CPR is what you paid for each purchase result; lower than your target is better.</p>
-      </div>
-
-      <div class="chart-grid-2 stack-gap" id="graph3Section">
-        <div class="card chart-card">
-          <h3>Cost per Checkout Initiated & CPR</h3>
-          <div class="chart-wrap"><canvas id="checkoutCostChart"></canvas></div>
-          <div class="target-key-row">
-            <span class="target-key"><span class="target-key-dash"></span><span id="checkoutTargetKey">Checkout Target: —</span></span>
-            <span class="target-key"><span class="target-key-dash"></span><span id="checkoutCprTargetKey">CPR Target: —</span></span>
+        <div id="chipSpend" class="chip metric-card metric-spend" role="button" tabindex="0" data-scroll-target="spendResultsCard" aria-label="View amount spent trend">
+          <div class="chip-header">
+            <div class="chip-icon chip-icon-spend" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M8.1 6.9h7.1M8.1 10.1h7.1M10 6.9c2.8 0 4.4 1.2 4.4 3.3 0 2.2-1.7 3.4-4.6 3.4H8.5l6.1 3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="chip-title">Amount Spent</div>
           </div>
-          <p class="caption">Shows checkout cost and purchase-result cost together; lower is better.</p>
+          <div class="chip-value metric-neutral">—</div>
+          <div class="chip-target chip-target-empty" aria-hidden="true"></div>
+          <div class="chip-footer">
+            <div class="chip-delta delta-neutral">—</div>
+          </div>
         </div>
-        <div class="card chart-card">
-          <h3>Graph 3 — Checkout to Result</h3>
-          <div class="chart-wrap"><canvas id="checkoutToResultChart"></canvas></div>
-          <p id="checkoutToResultCaption" class="caption">Out of every 100 initiated checkouts, — became purchase results.</p>
+
+        <div id="chipOrders" class="chip metric-card metric-orders" role="button" tabindex="0" data-scroll-target="spendResultsCard" aria-label="View total orders trend">
+          <div class="chip-header">
+            <div class="chip-icon chip-icon-orders" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6.2 8.2h11.6l-.8 10.1a2 2 0 01-2 1.8H9a2 2 0 01-2-1.8L6.2 8.2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8.2V6.6a3 3 0 016 0v1.6M9.3 13l1.8 1.8 3.7-3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="chip-title">Total Orders</div>
+          </div>
+          <div class="chip-value metric-neutral">—</div>
+          <div class="chip-target chip-target-empty" aria-hidden="true"></div>
+          <div class="chip-footer">
+            <div class="chip-delta delta-neutral">—</div>
+          </div>
+        </div>
+
+        <div id="chipRoas" class="chip metric-card metric-roas" role="button" tabindex="0" data-scroll-target="roasCard" aria-label="View ROAS trend">
+          <div class="chip-header">
+            <div class="chip-icon chip-icon-roas" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4.5 18.5h15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7.2 16v-4.2M11.8 16V9.5M16.4 16V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 9.1l4-3 3.1 2 4.1-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.6 4.1h2.1v2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="chip-title">ROAS</div>
+          </div>
+          <div class="chip-value metric-neutral">—</div>
+          <div class="chip-target">Target: —</div>
+          <div class="chip-footer">
+            <div class="chip-delta delta-neutral">—</div>
+          </div>
+        </div>
+
+        <div id="chipCpr" class="chip metric-card metric-cpo" role="button" tabindex="0" data-scroll-target="cprTrendCard" aria-label="View cost per order trend">
+          <div class="chip-header">
+            <div class="chip-icon chip-icon-cpr" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4.5 5.8h10.2l4.8 4.8-8.9 8.9-6.1-6.1V5.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="9.4" r="1.2" fill="currentColor"/><path d="M11.6 10.6h4.2M11.6 13h4.2M12.9 10.6c1.6 0 2.5.65 2.5 1.8 0 1.2-1 1.85-2.65 1.85h-1l3 1.8" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="chip-title">Cost per Order</div>
+          </div>
+          <div class="chip-value metric-neutral">—</div>
+          <div class="chip-target">Target: —</div>
+          <div class="chip-footer">
+            <div class="chip-delta delta-neutral">—</div>
+          </div>
+        </div>
+
+        <div id="chipConversion" class="chip metric-card metric-conversion" role="button" tabindex="0" data-scroll-target="landingToOrderCard" aria-label="View conversion rate trend">
+          <div class="chip-header">
+            <div class="chip-icon chip-icon-conversion" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M15.4 8.6l3.7-3.7M17.1 4.9h2v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="chip-title">Conversion Rate</div>
+          </div>
+          <div class="chip-value metric-neutral">—</div>
+          <div class="chip-target">Target: —</div>
+          <div class="chip-footer">
+            <div class="chip-delta delta-neutral">—</div>
+          </div>
         </div>
       </div>
-
-      <div class="card chart-card stack-gap" id="clicksToLandingCard">
-        <h3>Graph 1 — Clicks to Landing</h3>
-        <div class="chart-wrap"><canvas id="clicksToLandingChart"></canvas></div>
-        <div class="target-key-row"><span class="target-key"><span class="target-key-dash"></span><span id="landingPageViewRateTargetKey">Landing Page View Rate Target: —</span></span></div>
-        <p id="clicksToLandingCaption" class="caption">Out of every 100 people who clicked your ad, — landed on your page.</p>
-      </div>
-
-      <div class="chart-grid-2 stack-gap" id="graph2Section">
-        <div class="card chart-card">
-          <h3>Cost per Landing Page View & Cost per Result</h3>
-          <div class="chart-wrap"><canvas id="landingCostChart"></canvas></div>
-          <p class="caption">Shows what you paid for each landing page view versus each purchase result.</p>
-        </div>
-        <div class="card chart-card">
-          <h3>Graph 2 — Landing to Result</h3>
-          <div class="chart-wrap"><canvas id="landingToResultChart"></canvas></div>
-          <p id="landingToResultCaption" class="caption">Out of every 100 landing page visitors, — became purchase results.</p>
-        </div>
-      </div>
-
     </section>
 
     <section>
       <div class="section-head">
         <div>
-          <h2>Section D — Operational Drill-down Table</h2>
-          <p>Account totals first, then Campaign rows.</p>
+          <h2>Section B — Stage-by-Stage Detail Graphs</h2>
+        </div>
+      </div>
+
+      <div class="chart-grid-2 stack-gap">
+        <div class="card chart-card" id="spendResultsCard">
+          <h3>Amount Spent &amp; Total Orders</h3>
+          <div class="chart-wrap tall"><canvas id="spendResultsChart"></canvas></div>
+          <p class="caption">Shows how spending and total orders moved together over time.</p>
+        </div>
+
+        <div class="card chart-card stack-gap" id="roasCard">
+          <h3>ROAS</h3>
+          <div class="chart-wrap"><canvas id="roasChart"></canvas></div>
+          <div class="target-key-row"><span class="target-key"><span class="target-key-dash"></span><span id="roasTargetKey">ROAS Target: —</span></span></div>
+          <p class="caption">Shows purchase ROAS over time against your ROAS target; higher is better.</p>
+        </div>
+      </div>
+
+      <div class="chart-grid-2 stack-gap">
+        <div class="card chart-card stack-gap" id="cprTrendCard">
+          <h3>Cost per Order</h3>
+          <div class="chart-wrap"><canvas id="cprChart"></canvas></div>
+          <div class="target-key-row"><span class="target-key"><span class="target-key-dash"></span><span id="cprTargetKey">Cost per Order Target: —</span></span></div>
+          <p class="caption">Cost per Order is what you paid for each successful order; lower than your target is better.</p>
+        </div>
+
+        <div class="card chart-card stack-gap" id="checkoutCostCard">
+          <h3>Cost per Checkout</h3>
+          <div class="chart-wrap"><canvas id="checkoutCostChart"></canvas></div>
+          <div class="target-key-row"><span class="target-key"><span class="target-key-dash"></span><span id="checkoutTargetKey">Checkout Target: —</span></span></div>
+          <p class="caption">Shows the cost to generate an checkout over time; lower is better.</p>
+        </div>
+      </div>
+
+      <div class="chart-grid-2 stack-gap" id="cpmCpcSection">
+        <div class="card chart-card" id="cpmCard">
+          <h3>CPM</h3>
+          <div class="chart-wrap"><canvas id="cpmChart"></canvas></div>
+          <p class="caption">Shows cost per 1,000 impressions over time; lower is better.</p>
+        </div>
+        <div class="card chart-card" id="cpcCard">
+          <h3>CPC</h3>
+          <div class="chart-wrap"><canvas id="cpcChart"></canvas></div>
+          <p class="caption">Shows cost per link click over time; lower is better.</p>
+        </div>
+      </div>
+
+      <div class="chart-grid-2 stack-gap" id="graph6Section">
+        <div class="card chart-card" id="landingToOrderCard">
+          <h3>Landing Page View → Successful Order</h3>
+          <div class="chart-wrap"><canvas id="landingToResultChart"></canvas></div>
+          <p id="landingToResultCaption" class="caption">Out of every 100 landing page visitors, — became successful orders.</p>
+        </div>
+        <div class="card chart-card" id="checkoutToOrderCard">
+          <h3>Checkout → Successful Order</h3>
+          <div class="chart-wrap"><canvas id="checkoutToResultChart"></canvas></div>
+          <p id="checkoutToResultCaption" class="caption">Out of every 100 checkouts, — became successful orders.</p>
+        </div>
+      </div>
+    </section>
+
+<section>
+      <div class="section-head">
+        <div>
+          <h2>Section C — Funnel Overview</h2>
+        </div>
+      </div>
+      <div class="card funnel-card" id="funnelSectionCard">
+        <div id="funnel" class="funnel"></div>
+        <p id="funnelCaption" class="caption">Upload data to see the customer journey from click to order.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Section D — Campaign Breakdown</h2>
         </div>
       </div>
       <div class="card table-card">
@@ -1160,15 +2315,15 @@
             <thead>
               <tr>
                 <th data-sort="campaign">Campaign</th>
-                <th data-sort="results">Result</th>
-                <th data-sort="cpr">CPR</th>
+                <th data-sort="results">Total Orders</th>
+                <th data-sort="cpr">Cost per Order</th>
                 <th data-sort="spend">Amount Spent</th>
                 <th data-sort="cpc">CPC</th>
                 <th data-sort="cpm">CPM</th>
                 <th data-sort="hookRate">Hook Rate</th>
                 <th data-sort="holdRate">Hold Rate</th>
-                <th data-sort="checkouts">Checkout Initiated</th>
-                <th data-sort="costPerCheckout">Cost per Checkout Initiated</th>
+                <th data-sort="checkouts">Checkout</th>
+                <th data-sort="costPerCheckout">Cost per Checkout</th>
                 <th data-sort="uniqueOutboundClicks">Unique Outbound Clicks</th>
                 <th data-sort="landingPageViews">Landing Page Views</th>
               </tr>
@@ -1191,7 +2346,7 @@
       const STORAGE_DATA_KEY = 'metaAdsFunnelDashboard.data.v1';
       const STORAGE_TARGETS_KEY = 'metaAdsFunnelDashboard.targets.v1';
       const STORAGE_LAST_FETCH_KEY = 'metaAdsFunnelDashboard.lastFetch.v1';
-      const DEFAULT_TARGETS = { cpr: 200, checkout: 80, roas: 5.0, landingPageViewRate: 90 };
+      const DEFAULT_TARGETS = { cpr: 200, checkout: 80, roas: 5.0, landingPageViewRate: 90, conversionRate: 3 };
 
       const REQUIRED_HEADERS = [
         'Campaign name',
@@ -1206,6 +2361,7 @@
         'Hook Rate',
         'Hold Rate',
         'Checkouts initiated',
+        'Adds to cart',
         'Cost per checkout initiated',
         'Link clicks',
         'Unique outbound clicks',
@@ -1224,11 +2380,13 @@
         lastUpdatedTop: document.getElementById('lastUpdatedTop'),
         refreshNow: document.getElementById('refreshNow'),
         liveSourceMessage: document.getElementById('liveSourceMessage'),
+        campaignFilter: document.getElementById('campaignFilter'),
         dataPanel: document.getElementById('dataPanel'),
         cprTarget: document.getElementById('cprTarget'),
         checkoutTarget: document.getElementById('checkoutTarget'),
         roasTarget: document.getElementById('roasTarget'),
         landingPageViewRateTarget: document.getElementById('landingPageViewRateTarget'),
+        conversionRateTarget: document.getElementById('conversionRateTarget'),
         periodBadge: document.getElementById('currentPeriodBadge'),
         snapshotDailyPicker: document.getElementById('snapshotDailyPicker'),
         snapshotDateButton: document.getElementById('snapshotDateButton'),
@@ -1247,6 +2405,7 @@
       let rows = loadStoredRows();
       let targets = loadTargets();
       let granularity = 'daily';
+      let selectedCampaign = '__ALL__';
       let selectedSnapshotKey = null;
       let lastAppliedGlobalCutoff = null;
       let lastSuccessfulFetchAt = loadLastSuccessfulFetchAt();
@@ -1255,9 +2414,12 @@
       let charts = {};
       let tableSort = { key: 'spend', direction: 'desc' };
 
-      const ACCENT = '#2563eb';
+      const ACCENT = '#4f6ef7';
+      const ACCENT_VIOLET = '#7467f0';
+      const BEST = '#14b8a6';
+      const BEST_DEEP = '#0f8f83';
       const NEUTRAL = '#64748b';
-      const GRID = '#e2e8f0';
+      const GRID = 'rgba(148, 163, 184, 0.20)';
       const TEXT = '#475569';
 
       const targetLinePlugin = {
@@ -1273,8 +2435,8 @@
             if (y < chartArea.top || y > chartArea.bottom) return;
             ctx.save();
             ctx.beginPath();
-            ctx.setLineDash([7, 5]);
-            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 5]);
+            ctx.lineWidth = 1.35;
             ctx.strokeStyle = NEUTRAL;
             ctx.moveTo(chartArea.left, y);
             ctx.lineTo(chartArea.right, y);
@@ -1381,6 +2543,7 @@
           hookRate: parseNumber(raw['Hook Rate']),
           holdRate: parseNumber(raw['Hold Rate']),
           checkouts: parseNumber(raw['Checkouts initiated']),
+          addsToCart: parseNumber(raw['Adds to cart']),
           costPerCheckout: parseNumber(raw['Cost per checkout initiated']),
           linkClicks: parseNumber(raw['Link clicks']),
           uniqueOutboundClicks: parseNumber(raw['Unique outbound clicks']),
@@ -1527,7 +2690,8 @@
             cpr: positiveOrDefault(saved.cpr, DEFAULT_TARGETS.cpr),
             checkout: positiveOrDefault(saved.checkout, DEFAULT_TARGETS.checkout),
             roas: positiveOrDefault(saved.roas, DEFAULT_TARGETS.roas),
-            landingPageViewRate: positiveOrDefault(saved.landingPageViewRate, DEFAULT_TARGETS.landingPageViewRate)
+            landingPageViewRate: positiveOrDefault(saved.landingPageViewRate, DEFAULT_TARGETS.landingPageViewRate),
+            conversionRate: positiveOrDefault(saved.conversionRate, DEFAULT_TARGETS.conversionRate)
           };
         } catch {
           return { ...DEFAULT_TARGETS };
@@ -1581,6 +2745,7 @@
           hookRate: null,
           holdRate: null,
           checkouts: 0,
+          addsToCart: 0,
           costPerCheckout: null,
           uniqueOutboundClicks: 0,
           landingPageViews: 0,
@@ -1594,6 +2759,7 @@
           base.results += purchaseResults(r);
           base.spend += valueOrZero(r.spend);
           base.checkouts += valueOrZero(r.checkouts);
+          base.addsToCart += valueOrZero(r.addsToCart);
           base.uniqueOutboundClicks += valueOrZero(r.uniqueOutboundClicks);
           base.landingPageViews += valueOrZero(r.landingPageViews);
           base.impressions += valueOrZero(r.impressions);
@@ -1673,9 +2839,9 @@
         return day;
       }
 
-      function groupedTimeSeries() {
+      function groupedTimeSeries(sourceRows = rows) {
         const map = new Map();
-        rows.forEach(row => {
+        sourceRows.forEach(row => {
           const key = periodKey(row.day);
           if (!map.has(key)) map.set(key, []);
           map.get(key).push(row);
@@ -1685,8 +2851,28 @@
           .map(([key, groupRows]) => ({ key, rows: groupRows, agg: aggregateRows(groupRows) }));
       }
 
+      function analysisRows() {
+        if (selectedCampaign === '__ALL__') return rows;
+        return rows.filter(row => row.campaign === selectedCampaign);
+      }
+
+      function analysisTimeSeries() {
+        const campaignRows = analysisRows();
+        const byPeriod = new Map();
+        campaignRows.forEach(row => {
+          const key = periodKey(row.day);
+          if (!byPeriod.has(key)) byPeriod.set(key, []);
+          byPeriod.get(key).push(row);
+        });
+
+        return groupedTimeSeries(rows).map(period => {
+          const groupRows = byPeriod.get(period.key) || [];
+          return { key: period.key, rows: groupRows, agg: aggregateRows(groupRows) };
+        });
+      }
+
       function visibleTimeSeries() {
-        const series = groupedTimeSeries();
+        const series = analysisTimeSeries();
         if (!selectedSnapshotKey) return series;
         return series.filter(period => period.key <= selectedSnapshotKey);
       }
@@ -1745,6 +2931,10 @@
         return Number.isFinite(v) ? '₹' + v.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
       }
 
+      function formatCurrencyRounded(v) {
+        return Number.isFinite(v) ? '₹' + Math.round(v).toLocaleString('en-IN', { maximumFractionDigits: 0 }) : '—';
+      }
+
       function formatPercent(v) {
         return Number.isFinite(v) ? v.toLocaleString('en-IN', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%' : '—';
       }
@@ -1777,6 +2967,32 @@
         }
         els.dataTop.textContent = text;
         els.dataBottom.textContent = text;
+      }
+
+      function syncCampaignFilter() {
+        const campaigns = Array.from(new Set(rows.map(row => row.campaign).filter(Boolean)))
+          .sort((a, b) => a.localeCompare(b));
+
+        if (selectedCampaign !== '__ALL__' && !campaigns.includes(selectedCampaign)) {
+          selectedCampaign = '__ALL__';
+        }
+
+        els.campaignFilter.replaceChildren();
+
+        const allOption = document.createElement('option');
+        allOption.value = '__ALL__';
+        allOption.textContent = 'All Campaigns';
+        els.campaignFilter.appendChild(allOption);
+
+        campaigns.forEach(campaign => {
+          const option = document.createElement('option');
+          option.value = campaign;
+          option.textContent = campaign;
+          els.campaignFilter.appendChild(option);
+        });
+
+        els.campaignFilter.value = selectedCampaign;
+        els.campaignFilter.disabled = campaigns.length === 0;
       }
 
       function formatDailySnapshotLabel(key) {
@@ -1959,11 +3175,44 @@
       }
 
       function currentPeriod() {
-        const series = groupedTimeSeries();
+        const series = analysisTimeSeries();
         if (!series.length) return null;
 
-        const selected = series.find(period => period.key === selectedSnapshotKey);
-        return selected || series[series.length - 1];
+        if (selectedSnapshotKey) {
+          return series.find(period => period.key === selectedSnapshotKey) || null;
+        }
+
+        return series[series.length - 1];
+      }
+
+      function previousPeriodKey(key) {
+        if (!key) return null;
+
+        if (granularity === 'monthly') {
+          const [year, month] = key.split('-').map(Number);
+          const previous = new Date(Date.UTC(year, month - 2, 1));
+          return `${previous.getUTCFullYear()}-${String(previous.getUTCMonth() + 1).padStart(2, '0')}`;
+        }
+
+        const d = new Date(key + 'T00:00:00Z');
+        d.setUTCDate(d.getUTCDate() - (granularity === 'weekly' ? 7 : 1));
+        return d.toISOString().slice(0, 10);
+      }
+
+      function analysisPeriodByKey(key) {
+        const matching = analysisRows().filter(row => periodKey(row.day) === key);
+        return matching.length ? { key, rows: matching, agg: aggregateRows(matching) } : null;
+      }
+
+      function periodChange(currentValue, previousValue) {
+        if (!Number.isFinite(currentValue) || !Number.isFinite(previousValue) || previousValue === 0) {
+          return { text: '—', cls: 'trend-neutral' };
+        }
+
+        const change = (currentValue - previousValue) / previousValue * 100;
+        if (Math.abs(change) < 0.0001) return { text: '0.0%', cls: 'trend-neutral' };
+        if (change > 0) return { text: `↑ ${formatPercent(Math.abs(change))}`, cls: 'trend-up' };
+        return { text: `↓ ${formatPercent(Math.abs(change))}`, cls: 'trend-down' };
       }
 
       function statusFor(actual, target, higherIsBetter) {
@@ -1978,34 +3227,122 @@
         return { cls: 'red', label: 'Worse than target by more than 10%' };
       }
 
-      function renderChip(el, actual, target, formatter, higherIsBetter) {
-        const status = statusFor(actual, target, higherIsBetter);
-        el.className = 'chip' + (status.cls ? ' ' + status.cls : '');
-        el.querySelector('.chip-value').textContent = formatter(actual);
-        el.querySelector('.chip-target').textContent = 'Target: ' + formatter(target);
-        el.querySelector('.chip-status').textContent = status.label;
+      function widgetValueClass(actual, target, higherIsBetter) {
+        if (!Number.isFinite(actual) || !Number.isFinite(target) || target <= 0) return 'metric-neutral';
+
+        if (higherIsBetter) {
+          if (actual >= target) return 'metric-good';
+          if (actual >= target * 0.85) return 'metric-warning';
+          return 'metric-bad';
+        }
+
+        if (actual <= target) return 'metric-good';
+        if (actual <= target * 1.15) return 'metric-warning';
+        return 'metric-bad';
+      }
+
+      function widgetDelta(currentValue, previousValue, higherIsBetter, periodWord, neutralMetric = false) {
+        if (!Number.isFinite(currentValue) || !Number.isFinite(previousValue) || previousValue === 0) {
+          return { text: `— vs previous ${periodWord}`, cls: 'delta-neutral' };
+        }
+
+        const change = (currentValue - previousValue) / previousValue * 100;
+        if (Math.abs(change) < 0.0001) {
+          return { text: `0.0% vs previous ${periodWord}`, cls: 'delta-neutral' };
+        }
+
+        const arrow = change > 0 ? '▲' : '▼';
+        if (neutralMetric) {
+          return { text: `${arrow} ${formatPercent(Math.abs(change))} vs previous ${periodWord}`, cls: 'delta-neutral' };
+        }
+
+        const improved = higherIsBetter ? change > 0 : change < 0;
+        return {
+          text: `${arrow} ${formatPercent(Math.abs(change))} vs previous ${periodWord}`,
+          cls: improved ? 'delta-good' : 'delta-bad'
+        };
+      }
+
+      function updateWidget(el, options) {
+        if (!el) return;
+        const valueEl = el.querySelector('.chip-value');
+        const targetEl = el.querySelector('.chip-target');
+        const deltaEl = el.querySelector('.chip-delta');
+
+        valueEl.textContent = options.formatter(options.value);
+        valueEl.className = `chip-value ${options.valueClass || 'metric-neutral'}`;
+
+        if (options.targetText) {
+          targetEl.textContent = options.targetText;
+          targetEl.classList.remove('chip-target-empty');
+        } else {
+          targetEl.textContent = '';
+          targetEl.classList.add('chip-target-empty');
+        }
+
+        deltaEl.textContent = options.delta.text;
+        deltaEl.className = `chip-delta ${options.delta.cls || 'delta-neutral'}`;
       }
 
       function renderHealth() {
         const current = currentPeriod();
-        if (!current) {
-          els.periodBadge.textContent = 'No data';
-          renderChip(document.getElementById('chipCpr'), null, targets.cpr, formatCurrency, false);
-          renderChip(document.getElementById('chipRoas'), null, targets.roas, formatRoas, true);
-          renderChip(document.getElementById('chipCheckout'), null, targets.checkout, formatCurrency, false);
-          return;
-        }
-        els.periodBadge.textContent = longPeriodLabel(current.key);
-        renderChip(document.getElementById('chipCpr'), current.agg.cpr, targets.cpr, formatCurrency, false);
-        renderChip(document.getElementById('chipRoas'), current.agg.roas, targets.roas, formatRoas, true);
-        renderChip(document.getElementById('chipCheckout'), current.agg.costPerCheckout, targets.checkout, formatCurrency, false);
+        const currentKey = current?.key || null;
+        const previous = currentKey ? analysisPeriodByKey(previousPeriodKey(currentKey)) : null;
+        const previousAgg = previous ? previous.agg : null;
+        const periodWord = granularity === 'daily' ? 'day' : granularity === 'weekly' ? 'week' : 'month';
+
+        const conversionRate = current ? ratioPercent(current.agg.results, current.agg.landingPageViews) : null;
+        const previousConversionRate = previousAgg ? ratioPercent(previousAgg.results, previousAgg.landingPageViews) : null;
+
+        els.periodBadge.textContent = current ? longPeriodLabel(current.key) : 'No data';
+
+        updateWidget(document.getElementById('chipSpend'), {
+          value: current ? current.agg.spend : null,
+          formatter: formatCurrencyRounded,
+          valueClass: 'metric-neutral',
+          targetText: '',
+          delta: widgetDelta(current ? current.agg.spend : null, previousAgg ? previousAgg.spend : null, true, periodWord, true)
+        });
+
+        updateWidget(document.getElementById('chipOrders'), {
+          value: current ? current.agg.results : null,
+          formatter: formatCount,
+          valueClass: 'metric-neutral',
+          targetText: '',
+          delta: widgetDelta(current ? current.agg.results : null, previousAgg ? previousAgg.results : null, true, periodWord)
+        });
+
+        updateWidget(document.getElementById('chipRoas'), {
+          value: current ? current.agg.roas : null,
+          formatter: formatRoas,
+          valueClass: widgetValueClass(current ? current.agg.roas : null, targets.roas, true),
+          targetText: 'Target: ' + formatRoas(targets.roas),
+          delta: widgetDelta(current ? current.agg.roas : null, previousAgg ? previousAgg.roas : null, true, periodWord)
+        });
+
+        updateWidget(document.getElementById('chipCpr'), {
+          value: current ? current.agg.cpr : null,
+          formatter: formatCurrency,
+          valueClass: widgetValueClass(current ? current.agg.cpr : null, targets.cpr, false),
+          targetText: 'Target: ' + formatCurrency(targets.cpr),
+          delta: widgetDelta(current ? current.agg.cpr : null, previousAgg ? previousAgg.cpr : null, false, periodWord)
+        });
+
+        updateWidget(document.getElementById('chipConversion'), {
+          value: conversionRate,
+          formatter: formatPercent,
+          valueClass: widgetValueClass(conversionRate, targets.conversionRate, true),
+          targetText: 'Target: ' + formatPercent(targets.conversionRate),
+          delta: widgetDelta(conversionRate, previousConversionRate, true, periodWord)
+        });
       }
 
       function funnelIcon(type) {
         const icons = {
           click: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3l11 8-5 1 3 6-3 1.5-3-6-3 4V3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
           page: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-          cart: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 5h2l1.7 8.2a2 2 0 002 1.6h6.9a2 2 0 001.9-1.4L20 8H7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="18.5" r="1.2" fill="currentColor"/><circle cx="17" cy="18.5" r="1.2" fill="currentColor"/></svg>',
+          addToCart: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 6h2.4l1.5 8.1c.18.95 1 1.64 1.97 1.64h7.05c.9 0 1.7-.6 1.94-1.47L20 8.2H7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.3 2.7v7.1m-2.8-2.7 2.8 2.8 2.8-2.8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.2" cy="19" r="1.25" fill="currentColor"/><circle cx="17" cy="19" r="1.25" fill="currentColor"/></svg>',
+          checkout: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 5.5h2.1l1.55 8.05a2 2 0 001.96 1.62h6.7a2 2 0 001.91-1.42l1.1-3.55" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="18.8" r="1.2" fill="currentColor"/><circle cx="16.6" cy="18.8" r="1.2" fill="currentColor"/><circle cx="16.6" cy="7.2" r="4.25" fill="currentColor" opacity=".22"/><path d="M14.7 7.2l1.25 1.28 2.55-2.62" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
           result: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7V5.5A2.5 2.5 0 019.5 3h5A2.5 2.5 0 0117 5.5V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 7h14l-1 13H6L5 7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 13l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
         };
         return icons[type] || '';
@@ -2016,116 +3353,143 @@
 
         const current = currentPeriod();
         const data = current ? current.agg : null;
+        const previous = current ? analysisPeriodByKey(previousPeriodKey(current.key)) : null;
+        const previousData = previous ? previous.agg : null;
+        const periodWord = granularity === 'daily' ? 'day' : granularity === 'weekly' ? 'week' : 'month';
 
         const stages = [
-          { name: 'Unique Outbound Clicks', value: data ? data.uniqueOutboundClicks : 0, icon: 'click' },
-          { name: 'Landing Page Views', value: data ? data.landingPageViews : 0, icon: 'page' },
-          { name: 'Checkout Initiated', value: data ? data.checkouts : 0, icon: 'cart' },
-          { name: 'Result', value: data ? data.results : 0, icon: 'result' }
+          { name: 'Unique Outbound Clicks', value: data ? data.uniqueOutboundClicks : 0, previousValue: previousData ? previousData.uniqueOutboundClicks : null, icon: 'click', align: 'top', x: 14, cardTop: 28, lineTop: 154, lineHeight: 116, dotAt: 'bottom' },
+          { name: 'Landing Page Views', value: data ? data.landingPageViews : 0, previousValue: previousData ? previousData.landingPageViews : null, icon: 'page', align: 'bottom', x: 33, cardTop: 470, lineTop: 394, lineHeight: 66, dotAt: 'top' },
+          { name: 'Add to Cart', value: data ? data.addsToCart : 0, previousValue: previousData ? previousData.addsToCart : null, icon: 'addToCart', align: 'top', x: 51, cardTop: 28, lineTop: 154, lineHeight: 159, dotAt: 'bottom' },
+          { name: 'Checkout', value: data ? data.checkouts : 0, previousValue: previousData ? previousData.checkouts : null, icon: 'checkout', align: 'bottom', x: 70, cardTop: 470, lineTop: 354, lineHeight: 106, dotAt: 'top' },
+          { name: 'Total Orders', value: data ? data.results : 0, previousValue: previousData ? previousData.results : null, icon: 'result', align: 'top', x: 86, cardTop: 28, lineTop: 154, lineHeight: 184, dotAt: 'bottom' }
         ];
 
-        const first = stages[0].value;
-        const renderedWidths = [];
+        function stageChange(value, previousValue) {
+          if (!Number.isFinite(value) || !Number.isFinite(previousValue) || previousValue === 0) {
+            return { text: `— vs previous ${periodWord}`, cls: 'neutral' };
+          }
+          const change = (value - previousValue) / previousValue * 100;
+          if (Math.abs(change) < 0.0001) return { text: `0.0% vs previous ${periodWord}`, cls: 'neutral' };
+          return {
+            text: `${change > 0 ? '+' : '-'}${formatPercent(Math.abs(change))} vs previous ${periodWord}`,
+            cls: change > 0 ? 'positive' : 'negative'
+          };
+        }
+
+        const shell = document.createElement('div');
+        shell.className = 'funnel-reference-shell';
+
+        const head = document.createElement('div');
+        head.className = 'funnel-reference-head';
+        head.innerHTML = `
+          <div class="funnel-reference-brand">
+            <div class="funnel-reference-logo" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none"><path d="M8 39c0-11 5.7-20 12.4-20 7.3 0 12.6 12.3 16.1 20 3.6-7.7 9-20 16.2-20C59.4 19 65 28 65 39" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <h3 class="funnel-reference-title">Funnel Overview</h3>
+            </div>
+          </div>
+          <div class="funnel-reference-actions">
+            <div class="funnel-reference-period">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span>${current ? longPeriodLabel(current.key) : 'No data'}</span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="funnel-reference-more" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></div>
+          </div>
+        `;
+        shell.appendChild(head);
+
+        const body = document.createElement('div');
+        body.className = 'funnel-reference-body';
+        body.innerHTML = `
+          <svg class="funnel-ribbon-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="funnelRibbonGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#4338ca"/>
+                <stop offset="35%" stop-color="#4f6ef7"/>
+                <stop offset="68%" stop-color="#43adf8"/>
+                <stop offset="100%" stop-color="#27c4bf"/>
+              </linearGradient>
+            </defs>
+            <path d="M28 18 C 260 82, 500 108, 1160 136 Q1192 138 1192 164 Q1192 190 1160 191 C 650 198, 330 219, 28 280 Q8 284 8 258 L8 42 Q8 16 28 18 Z" fill="url(#funnelRibbonGradient)"/>
+            <line x1="335" y1="88" x2="335" y2="220" stroke="rgba(255,255,255,.34)" stroke-width="2" stroke-dasharray="6 7"/>
+            <line x1="555" y1="112" x2="555" y2="203" stroke="rgba(255,255,255,.34)" stroke-width="2" stroke-dasharray="6 7"/>
+            <line x1="800" y1="126" x2="800" y2="190" stroke="rgba(255,255,255,.34)" stroke-width="2" stroke-dasharray="6 7"/>
+            <g fill="none" stroke="rgba(255,255,255,.64)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M298 146l10 12-10 12M310 146l10 12-10 12"/>
+              <path d="M520 146l10 12-10 12M532 146l10 12-10 12"/>
+              <path d="M755 146l10 12-10 12M767 146l10 12-10 12"/>
+            </g>
+          </svg>
+        `;
 
         stages.forEach((stage, index) => {
-          const retained = first > 0
-            ? stage.value / first * 100
-            : null;
-
-          const previousValue = index > 0
-            ? stages[index - 1].value
-            : null;
-
-          const dropoff = index > 0 && previousValue > 0
-            ? (previousValue - stage.value) / previousValue * 100
-            : null;
-
-          let visualWidth;
-
-          if (index === 0) {
-            visualWidth = 100;
-          } else {
-            const retainedFraction = Number.isFinite(retained)
-              ? Math.max(0, retained) / 100
-              : 0;
-
-            const computedWidth = 16 + 84 * Math.sqrt(retainedFraction);
-            const previousRenderedWidth = renderedWidths[index - 1];
-
-            visualWidth = Math.min(
-              computedWidth,
-              previousRenderedWidth,
-              99
-            );
+          let retained = null;
+          if (data) {
+            if (stage.name === 'Landing Page Views') {
+              retained = data.uniqueOutboundClicks > 0
+                ? data.landingPageViews / data.uniqueOutboundClicks * 100
+                : null;
+            } else if (stage.name === 'Add to Cart') {
+              retained = data.landingPageViews > 0
+                ? data.addsToCart / data.landingPageViews * 100
+                : null;
+            } else if (stage.name === 'Checkout') {
+              retained = data.addsToCart > 0
+                ? data.checkouts / data.addsToCart * 100
+                : null;
+            } else if (stage.name === 'Total Orders') {
+              retained = data.checkouts > 0
+                ? data.results / data.checkouts * 100
+                : null;
+            }
           }
+          const change = stageChange(stage.value, stage.previousValue);
 
-          renderedWidths.push(visualWidth);
+          const connector = document.createElement('div');
+          connector.className = 'funnel-stage-connector';
+          connector.style.left = `${stage.x}%`;
+          connector.style.top = `${stage.lineTop}px`;
+          connector.style.height = `${stage.lineHeight}px`;
+          const dot = document.createElement('div');
+          dot.className = 'funnel-stage-connector-dot';
+          dot.style[stage.dotAt === 'top' ? 'top' : 'bottom'] = '-8px';
+          connector.appendChild(dot);
+          body.appendChild(connector);
 
-          const row = document.createElement('div');
-          row.className = 'funnel-row';
-
-          const lane = document.createElement('div');
-          lane.className = 'funnel-shape-lane';
-          lane.style.setProperty('--shape-width', visualWidth + '%');
-
-          const shape = document.createElement('div');
-          shape.className = `funnel-shape stage-${index + 1}`;
-
-          const icon = document.createElement('div');
-          icon.className = 'funnel-stage-icon';
-          icon.innerHTML = funnelIcon(stage.icon);
-
-          shape.appendChild(icon);
-          lane.appendChild(shape);
-
-          const leader = document.createElement('div');
-          leader.className = 'funnel-leader';
-
-          const detail = document.createElement('div');
-          detail.className = 'funnel-detail-card';
-
-          const main = document.createElement('div');
-
-          const name = document.createElement('div');
-          name.className = 'funnel-detail-name';
-          name.textContent = stage.name;
-
-          const count = document.createElement('div');
-          count.className = 'funnel-detail-count';
-          count.textContent = current ? formatCount(stage.value) : '—';
-
-          main.append(name, count);
-
-          const stats = document.createElement('div');
-          stats.className = 'funnel-detail-stats';
-
-          const retainedStat = document.createElement('div');
-          retainedStat.className = 'funnel-detail-stat';
-          retainedStat.innerHTML = '<div class="funnel-detail-stat-label">Retained from first stage</div><div class="funnel-detail-stat-value"></div>';
-          retainedStat.querySelector('.funnel-detail-stat-value').textContent = current
-            ? (index === 0 ? '100.0%' : formatPercent(retained))
-            : '—';
-
-          const dropoffStat = document.createElement('div');
-          dropoffStat.className = 'funnel-detail-stat';
-          dropoffStat.innerHTML = '<div class="funnel-detail-stat-label">Drop-off from previous stage</div><div class="funnel-detail-stat-value"></div>';
-          dropoffStat.querySelector('.funnel-detail-stat-value').textContent = current && index > 0
-            ? formatPercent(dropoff)
-            : '—';
-
-          stats.append(retainedStat, dropoffStat);
-          detail.append(main, stats);
-          row.append(lane, leader, detail);
-          els.funnel.appendChild(row);
+          const card = document.createElement('div');
+          card.className = `funnel-stage-card ${stage.align}`;
+          card.style.left = `${stage.x}%`;
+          card.style.top = `${stage.cardTop}px`;
+          card.innerHTML = `
+            <div class="funnel-stage-card-inner">
+              <div class="funnel-stage-card-icon">${funnelIcon(stage.icon)}</div>
+              <div>
+                <div class="funnel-stage-card-title">${index + 1}. ${stage.name}</div>
+                <div class="funnel-stage-card-value">${current ? formatCount(stage.value) : '—'}</div>
+                ${stage.name === 'Unique Outbound Clicks'
+                  ? ''
+                  : `<div class="funnel-stage-card-retained">${current ? `${formatPercent(retained)} retained` : '—'}</div>`}
+                <div class="funnel-stage-card-change ${change.cls}">${change.text}</div>
+              </div>
+            </div>
+          `;
+          body.appendChild(card);
         });
 
+        shell.appendChild(body);
+        els.funnel.appendChild(shell);
+
         if (!current) {
-          els.funnelCaption.textContent = 'Upload data to see the customer journey from click to purchase.';
+          els.funnelCaption.textContent = 'Upload data to see the customer journey from click to order.';
         } else {
-          const finalRetention = ratioPercent(data.results, data.uniqueOutboundClicks);
+          const finalRetention = ratioPercent(data.results, data.checkouts);
           els.funnelCaption.textContent = Number.isFinite(finalRetention)
-            ? `${formatPercent(finalRetention)} of unique outbound clickers became purchase results in ${longPeriodLabel(current.key)}.`
-            : `The selected period (${longPeriodLabel(current.key)}) does not have enough click data to calculate full-funnel retention.`;
+            ? `${formatPercent(finalRetention)} of checkouts became total orders in ${longPeriodLabel(current.key)}.`
+            : `The selected period (${longPeriodLabel(current.key)}) does not have enough checkout data to calculate final-stage retention.`;
         }
       }
 
@@ -2136,19 +3500,53 @@
           interaction: { mode: 'index', intersect: false },
           animation: { duration: 250 },
           plugins: {
-            legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8 } },
-            tooltip: { padding: 10 },
+            legend: {
+              position: 'top',
+              align: 'end',
+              labels: {
+                usePointStyle: true,
+                boxWidth: 8,
+                boxHeight: 8,
+                padding: 16,
+                color: '#475569',
+                font: { size: 11, weight: '700' }
+              }
+            },
+            tooltip: {
+              padding: 11,
+              cornerRadius: 10,
+              backgroundColor: 'rgba(15, 23, 42, 0.96)',
+              titleColor: '#ffffff',
+              bodyColor: '#e2e8f0',
+              borderColor: 'rgba(148, 163, 184, 0.22)',
+              borderWidth: 1,
+              displayColors: true
+            },
             targetLinePlugin: { lines: [] }
           },
           scales: {
             x: {
               grid: { display: false },
-              ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 }
+              border: { display: false },
+              ticks: {
+                maxRotation: 0,
+                autoSkip: true,
+                maxTicksLimit: 12,
+                color: '#718096',
+                padding: 8,
+                font: { size: 11, weight: '600' }
+              }
             },
             y: {
               beginAtZero: true,
-              grid: { color: GRID },
-              ticks: { callback: yTickCallback }
+              border: { display: false },
+              grid: { color: GRID, drawTicks: false },
+              ticks: {
+                callback: yTickCallback,
+                color: '#718096',
+                padding: 9,
+                font: { size: 11, weight: '600' }
+              }
             }
           }
         };
@@ -2170,18 +3568,78 @@
         });
       }
 
-      function lineDataset(label, data, color = ACCENT, axis = 'y') {
+      function bestIndex(values, mode = 'max', positiveOnly = false) {
+        let best = -1;
+        let bestValue = mode === 'min' ? Infinity : -Infinity;
+
+        values.forEach((value, index) => {
+          if (!Number.isFinite(value)) return;
+          if (positiveOnly && value <= 0) return;
+          if ((mode === 'min' && value < bestValue) || (mode === 'max' && value > bestValue)) {
+            best = index;
+            bestValue = value;
+          }
+        });
+
+        return best;
+      }
+
+      function makePremiumStarPointStyle() {
+        const size = 22;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        const cx = size / 2;
+        const cy = size / 2;
+        const outer = 9;
+        const inner = 4.1;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+          const radius = i % 2 === 0 ? outer : inner;
+          const angle = -Math.PI / 2 + i * Math.PI / 5;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.shadowColor = 'rgba(20, 184, 166, 0.34)';
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = BEST;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+        ctx.restore();
+        return canvas;
+      }
+
+      const PREMIUM_STAR_POINT = makePremiumStarPointStyle();
+
+      function lineDataset(label, data, color = ACCENT, axis = 'y', highlightIndex = -1, useFill = true) {
         return {
           label,
-          data,
+          data: data.map(plotted),
           yAxisID: axis,
           borderColor: color,
-          backgroundColor: color,
-          borderWidth: 2.25,
-          pointRadius: 2.5,
-          pointHoverRadius: 4,
-          tension: 0.22,
-          fill: false
+          backgroundColor: useFill
+            ? (context) => { const chart = context.chart; const area = chart.chartArea; if (!area) return 'rgba(79, 110, 247, 0.14)'; const gradient = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom); gradient.addColorStop(0, 'rgba(79, 110, 247, 0.24)'); gradient.addColorStop(0.55, 'rgba(79, 110, 247, 0.10)'); gradient.addColorStop(1, 'rgba(79, 110, 247, 0.01)'); return gradient; }
+            : 'rgba(79, 110, 247, 0)',
+          borderWidth: 2.55,
+          pointStyle: data.map((_, index) => index === highlightIndex ? PREMIUM_STAR_POINT : 'circle'),
+          pointRadius: data.map((_, index) => index === highlightIndex ? 8.5 : 3),
+          pointHoverRadius: data.map((_, index) => index === highlightIndex ? 9.5 : 5),
+          pointBackgroundColor: data.map((_, index) => index === highlightIndex ? BEST : '#ffffff'),
+          pointBorderColor: data.map((_, index) => index === highlightIndex ? '#ffffff' : color),
+          pointBorderWidth: data.map((_, index) => index === highlightIndex ? 0 : 2),
+          pointHitRadius: 12,
+          tension: 0.28,
+          fill: useFill ? 'origin' : false
         };
       }
 
@@ -2189,57 +3647,15 @@
         const series = visibleTimeSeries();
         const labels = series.map(p => periodLabel(p.key));
         const aggs = series.map(p => p.agg);
-        const latest = aggs.length ? aggs[aggs.length - 1] : null;
 
-        document.getElementById('landingPageViewRateTargetKey').textContent = `Landing Page View Rate Target: ${formatPercent(targets.landingPageViewRate)}`;
-        document.getElementById('checkoutTargetKey').textContent = `Cost per Checkout Initiated Target: ${formatCurrency(targets.checkout)}`;
-        document.getElementById('checkoutCprTargetKey').textContent = `CPR Target: ${formatCurrency(targets.cpr)}`;
+        document.getElementById('checkoutTargetKey').textContent = `Cost per Checkout Target: ${formatCurrency(targets.checkout)}`;
         document.getElementById('roasTargetKey').textContent = `ROAS Target: ${formatRoas(targets.roas)}`;
-        document.getElementById('cprTargetKey').textContent = `CPR Target: ${formatCurrency(targets.cpr)}`;
+        document.getElementById('cprTargetKey').textContent = `Cost per Order Target: ${formatCurrency(targets.cpr)}`;
 
-        const percentOptions1 = baseOptions(v => `${Number(v).toFixed(0)}%`);
-        percentOptions1.scales.y.suggestedMax = Math.max(100, targets.landingPageViewRate * 1.1);
-        percentOptions1.plugins.targetLinePlugin.lines = [
-          { value: targets.landingPageViewRate }
-        ];
-        percentOptions1.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatPercent(ctx.parsed.y)}` };
-        makeLineChart('clicksToLanding', 'clicksToLandingChart', labels,
-          [lineDataset('Landing Page Views / Unique Outbound Clicks', aggs.map(a => plotted(ratioPercent(a.landingPageViews, a.uniqueOutboundClicks))))],
-          percentOptions1
-        );
-
-        const percentOptions2 = baseOptions(v => `${Number(v).toFixed(0)}%`);
-        percentOptions2.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatPercent(ctx.parsed.y)}` };
-        makeLineChart('landingToResult', 'landingToResultChart', labels,
-          [lineDataset('Result / Landing Page Views', aggs.map(a => plotted(ratioPercent(a.results, a.landingPageViews))))],
-          percentOptions2
-        );
-
-        const landingCostOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
-        landingCostOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}` };
-        makeLineChart('landingCost', 'landingCostChart', labels, [
-          lineDataset('Cost per Landing Page View', aggs.map(a => plotted(costPer(a.spend, a.landingPageViews))), ACCENT),
-          lineDataset('Cost per Result', aggs.map(a => plotted(a.cpr)), NEUTRAL)
-        ], landingCostOptions);
-
-        const percentOptions3 = baseOptions(v => `${Number(v).toFixed(0)}%`);
-        percentOptions3.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatPercent(ctx.parsed.y)}` };
-        makeLineChart('checkoutToResult', 'checkoutToResultChart', labels,
-          [lineDataset('Result / Checkout Initiated', aggs.map(a => plotted(ratioPercent(a.results, a.checkouts))))],
-          percentOptions3
-        );
-
-        const checkoutCostOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
-        checkoutCostOptions.scales.y.suggestedMax = Math.max(targets.checkout, targets.cpr) * 1.1;
-        checkoutCostOptions.plugins.targetLinePlugin.lines = [
-          { value: targets.checkout },
-          { value: targets.cpr }
-        ];
-        checkoutCostOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}` };
-        makeLineChart('checkoutCost', 'checkoutCostChart', labels, [
-          lineDataset('Cost per Checkout Initiated', aggs.map(a => plotted(a.costPerCheckout)), ACCENT),
-          lineDataset('CPR', aggs.map(a => plotted(a.cpr)), NEUTRAL)
-        ], checkoutCostOptions);
+        const spendValues = aggs.map(a => a.spend);
+        const orderValues = aggs.map(a => a.results);
+        const effectiveCpoValues = aggs.map(a => a.results > 0 ? a.spend / a.results : null);
+        const bestEfficiencyIndex = bestIndex(effectiveCpoValues, 'min', true);
 
         destroyChart('spendResults');
         const spendOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
@@ -2248,8 +3664,9 @@
           position: 'right',
           beginAtZero: true,
           grid: { drawOnChartArea: false },
-          ticks: { callback: v => Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 }) },
-          title: { display: true, text: 'Result' }
+          border: { display: false },
+          ticks: { callback: v => Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 }), color: '#718096', padding: 9, font: { size: 11, weight: '600' } },
+          title: { display: true, text: 'Total Orders' }
         };
         spendOptions.plugins.tooltip.callbacks = {
           label: ctx => ctx.dataset.yAxisID === 'y1'
@@ -2260,45 +3677,83 @@
           data: {
             labels,
             datasets: [
-              { ...lineDataset('Amount Spent', aggs.map(a => plotted(a.spend)), ACCENT, 'y'), type: 'line' },
+              { ...lineDataset('Amount Spent', spendValues, ACCENT, 'y', -1, false), type: 'line', pointBackgroundColor: '#ffffff', pointBorderColor: ACCENT },
               {
                 type: 'bar',
-                label: 'Result',
-                data: aggs.map(a => plotted(a.results)),
+                label: 'Total Orders',
+                data: orderValues.map(plotted),
                 yAxisID: 'y1',
-                backgroundColor: 'rgba(100, 116, 139, 0.45)',
-                borderColor: NEUTRAL,
+                backgroundColor: orderValues.map((_, index) => index === bestEfficiencyIndex ? 'rgba(20, 184, 166, 0.82)' : 'rgba(99, 112, 146, 0.34)'),
+                borderColor: orderValues.map((_, index) => index === bestEfficiencyIndex ? BEST_DEEP : 'rgba(100, 116, 139, 0.62)'),
                 borderWidth: 1,
-                borderRadius: 4
+                borderRadius: 7,
+                borderSkipped: false
               }
             ]
           },
           options: spendOptions
         });
 
+        const roasValues = aggs.map(a => a.roas);
         const roasOptions = baseOptions(v => Number(v).toFixed(1));
         roasOptions.plugins.targetLinePlugin.lines = [{ value: targets.roas }];
         roasOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatRoas(ctx.parsed.y)}` };
-        makeLineChart('roas', 'roasChart', labels, [lineDataset('ROAS', aggs.map(a => plotted(a.roas)))], roasOptions);
+        makeLineChart('roas', 'roasChart', labels, [
+          lineDataset('ROAS', roasValues, ACCENT, 'y', bestIndex(roasValues, 'max'), true)
+        ], roasOptions);
 
+        const cprValues = aggs.map(a => a.cpr);
         const cprOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
         cprOptions.plugins.targetLinePlugin.lines = [{ value: targets.cpr }];
         cprOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}` };
-        makeLineChart('cpr', 'cprChart', labels, [lineDataset('CPR', aggs.map(a => plotted(a.cpr)))], cprOptions);
+        makeLineChart('cpr', 'cprChart', labels, [
+          lineDataset('Cost per Order', cprValues, ACCENT, 'y', bestIndex(cprValues, 'min', true), true)
+        ], cprOptions);
 
+        const checkoutCostValues = aggs.map(a => a.costPerCheckout);
+        const checkoutCostOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
+        checkoutCostOptions.scales.y.suggestedMax = targets.checkout * 1.1;
+        checkoutCostOptions.plugins.targetLinePlugin.lines = [{ value: targets.checkout }];
+        checkoutCostOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}` };
+        makeLineChart('checkoutCost', 'checkoutCostChart', labels, [
+          lineDataset('Cost per Checkout', checkoutCostValues, ACCENT, 'y', bestIndex(checkoutCostValues, 'min', true), true)
+        ], checkoutCostOptions);
 
-        const clickLanding = latest ? ratioPercent(latest.landingPageViews, latest.uniqueOutboundClicks) : null;
-        const landingResult = latest ? ratioPercent(latest.results, latest.landingPageViews) : null;
-        const checkoutResult = latest ? ratioPercent(latest.results, latest.checkouts) : null;
-        document.getElementById('clicksToLandingCaption').textContent = Number.isFinite(clickLanding)
-          ? `Out of every 100 people who clicked your ad, ${clickLanding.toFixed(1)} landed on your page in the latest selected period.`
-          : 'Out of every 100 people who clicked your ad, — landed on your page.';
-        document.getElementById('landingToResultCaption').textContent = Number.isFinite(landingResult)
-          ? `Out of every 100 landing page visitors, ${landingResult.toFixed(1)} became purchase results in the latest selected period.`
-          : 'Out of every 100 landing page visitors, — became purchase results.';
-        document.getElementById('checkoutToResultCaption').textContent = Number.isFinite(checkoutResult)
-          ? `Out of every 100 initiated checkouts, ${checkoutResult.toFixed(1)} became purchase results in the latest selected period.`
-          : 'Out of every 100 initiated checkouts, — became purchase results.';
+        const cpmValues = aggs.map(a => a.cpm);
+        const cpmOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
+        cpmOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}` };
+        makeLineChart('cpm', 'cpmChart', labels, [
+          lineDataset('CPM', cpmValues, ACCENT, 'y', bestIndex(cpmValues, 'min', true), true)
+        ], cpmOptions);
+
+        const cpcValues = aggs.map(a => a.cpc);
+        const cpcOptions = baseOptions(v => `₹${Number(v).toFixed(0)}`);
+        cpcOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}` };
+        makeLineChart('cpc', 'cpcChart', labels, [
+          lineDataset('CPC', cpcValues, ACCENT, 'y', bestIndex(cpcValues, 'min', true), true)
+        ], cpcOptions);
+
+        const landingToResultValues = aggs.map(a => ratioPercent(a.results, a.landingPageViews));
+        const landingLatest = landingToResultValues.length ? landingToResultValues[landingToResultValues.length - 1] : null;
+        document.getElementById('landingToResultCaption').textContent = Number.isFinite(landingLatest)
+          ? `Out of every 100 landing page visitors, ${formatPercent(landingLatest)} became successful orders.`
+          : 'Out of every 100 landing page visitors, — became successful orders.';
+        const landingToResultOptions = baseOptions(v => `${Number(v).toFixed(1)}%`);
+        landingToResultOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatPercent(ctx.parsed.y)}` };
+        makeLineChart('landingToResult', 'landingToResultChart', labels, [
+          lineDataset('Landing Page View → Successful Order', landingToResultValues, ACCENT, 'y', bestIndex(landingToResultValues, 'max', true), true)
+        ], landingToResultOptions);
+
+        const checkoutToResultValues = aggs.map(a => ratioPercent(a.results, a.checkouts));
+        const checkoutLatest = checkoutToResultValues.length ? checkoutToResultValues[checkoutToResultValues.length - 1] : null;
+        document.getElementById('checkoutToResultCaption').textContent = Number.isFinite(checkoutLatest)
+          ? `Out of every 100 checkouts, ${formatPercent(checkoutLatest)} became successful orders.`
+          : 'Out of every 100 checkouts, — became successful orders.';
+        const checkoutToResultOptions = baseOptions(v => `${Number(v).toFixed(1)}%`);
+        checkoutToResultOptions.plugins.tooltip.callbacks = { label: ctx => `${ctx.dataset.label}: ${formatPercent(ctx.parsed.y)}` };
+        makeLineChart('checkoutToResult', 'checkoutToResultChart', labels, [
+          lineDataset('Checkout → Successful Order', checkoutToResultValues, ACCENT, 'y', bestIndex(checkoutToResultValues, 'max', true), true)
+        ], checkoutToResultOptions);
       }
 
       function syncDateFilterToData() {
@@ -2443,6 +3898,7 @@
 
       function renderAll() {
         updateDataLoadedText();
+        syncCampaignFilter();
         syncSnapshotPeriodSelector();
         syncTableDateFilterToGlobalCutoff();
         renderHealth();
@@ -2474,6 +3930,13 @@
 
         els.refreshNow.addEventListener('click', () => {
           fetchLiveData({ manual: true });
+        });
+
+        els.campaignFilter.addEventListener('change', () => {
+          selectedCampaign = els.campaignFilter.value || '__ALL__';
+          renderHealth();
+          renderCharts();
+          renderFunnel();
         });
 
         els.clear.addEventListener('click', () => {
@@ -2539,17 +4002,19 @@
           if (event.key === 'Escape') closeSnapshotDateMenu();
         });
 
-        const targetInputs = [els.cprTarget, els.checkoutTarget, els.roasTarget, els.landingPageViewRateTarget];
+        const targetInputs = [els.cprTarget, els.checkoutTarget, els.roasTarget, els.landingPageViewRateTarget, els.conversionRateTarget];
         targetInputs.forEach(input => {
           input.addEventListener('input', () => {
             const cpr = Number(els.cprTarget.value);
             const checkout = Number(els.checkoutTarget.value);
             const roas = Number(els.roasTarget.value);
             const landingPageViewRate = Number(els.landingPageViewRateTarget.value);
+            const conversionRate = Number(els.conversionRateTarget.value);
             if (Number.isFinite(cpr) && cpr >= 0) targets.cpr = cpr;
             if (Number.isFinite(checkout) && checkout >= 0) targets.checkout = checkout;
             if (Number.isFinite(roas) && roas >= 0) targets.roas = roas;
             if (Number.isFinite(landingPageViewRate) && landingPageViewRate >= 0) targets.landingPageViewRate = landingPageViewRate;
+            if (Number.isFinite(conversionRate) && conversionRate >= 0) targets.conversionRate = conversionRate;
             saveTargets();
             renderHealth();
             renderCharts();
@@ -2595,6 +4060,7 @@
         els.checkoutTarget.value = targets.checkout;
         els.roasTarget.value = targets.roas;
         els.landingPageViewRateTarget.value = targets.landingPageViewRate;
+        els.conversionRateTarget.value = targets.conversionRate;
         syncDateFilterToData();
         bindEvents();
         updateLastUpdatedText();
